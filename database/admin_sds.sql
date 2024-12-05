@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 05, 2024 at 04:20 AM
+-- Generation Time: Dec 05, 2024 at 03:26 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -88,6 +88,19 @@ INSERT INTO `departments` (`DepartmentID`, `DepartmentName`) VALUES
 (10, 'แผนกวิชาเทคโนโลยีธุรกิจดิจิทัล'),
 (11, 'แผนกวิชาสามัญสัมพันธ์'),
 (12, 'วิทยาลัยการอาชีพวารินชำราบ');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `posts`
+--
+
+CREATE TABLE `posts` (
+  `id` int(11) NOT NULL,
+  `thread_id` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -199,6 +212,32 @@ CREATE TABLE `schedule` (
   `DayOfWeek` varchar(10) NOT NULL,
   `ClassGroup` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `service_ratings`
+--
+
+CREATE TABLE `service_ratings` (
+  `rating_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` tinyint(4) DEFAULT NULL CHECK (`rating` between 1 and 5),
+  `feedback` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `service_ratings`
+--
+
+INSERT INTO `service_ratings` (`rating_id`, `user_id`, `rating`, `feedback`, `created_at`) VALUES
+(35, 30, 3, 'มีบางส่วนที่ต้องปรับปรุง แต่โดยรวมถือว่าใช้ได้', '2024-11-05 12:26:07'),
+(36, 24, 5, 'บริการรวดเร็วทันใจ พนักงานเป็นกันเอง', '2024-11-05 12:26:07'),
+(38, 23, 4, 'ดี แต่มีบางจุดที่สามารถพัฒนาเพิ่มเติมได้', '2024-11-05 12:26:07'),
+(39, 31, 5, 'บริการดีมาก พนักงานน่ารักทุกคน', '2024-11-05 12:26:07'),
+(92, 3, 5, 'แจ่มเลยครับ', '2024-11-09 07:43:37'),
+(93, 3, 3, 'ปานกลางนะผมว่า', '2024-11-09 07:43:46');
 
 -- --------------------------------------------------------
 
@@ -381,15 +420,28 @@ INSERT INTO `teachers` (`TeacherID`, `Specialization`, `AvailableHours`, `UserID
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `threads`
+--
+
+CREATE TABLE `threads` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
-  `UserID` int(11) NOT NULL,
-  `FullName` varchar(100) NOT NULL,
-  `Email` varchar(100) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `fullname` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `username` varchar(50) NOT NULL,
   `Password` varchar(255) NOT NULL,
-  `Role` enum('Admin','Teacher','AcademicStaff','Executive','DepartmentHead') NOT NULL,
+  `role` enum('Admin','Teacher','AcademicStaff','Executive','DepartmentHead') NOT NULL,
   `ContactInfo` varchar(100) DEFAULT NULL,
   `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -398,14 +450,14 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`UserID`, `FullName`, `Email`, `Password`, `Role`, `ContactInfo`, `CreatedAt`) VALUES
-(4, 'admin', 'w.wimonput@gmail.com', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'Admin', '0910171373', '2024-12-01 14:34:19'),
-(5, 'นายวุฒิพงศ์ วิมลพัชร', 'w.wimonput@warinice.ac.th', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'Teacher', '0910171373', '2024-12-01 14:34:19'),
-(6, 'poppy', 'dbt@warinice.ac.th', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'AcademicStaff', '0910171373', '2024-12-01 14:34:19'),
-(7, 'admin', 'admin', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'Admin', '00000', '2024-12-02 14:04:36'),
-(8, 'poppy', 'poppy', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'AcademicStaff', '0910171373', '2024-12-01 14:34:19'),
-(9, 'poraor', 'poraor', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'Executive', '0910171373', '2024-12-01 14:34:19'),
-(10, 'headoffice', 'head', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'DepartmentHead', '0910171373', '2024-12-01 14:34:19');
+INSERT INTO `users` (`user_id`, `fullname`, `email`, `username`, `Password`, `role`, `ContactInfo`, `CreatedAt`) VALUES
+(4, 'admin', 'w.wimonput@gmail.com', 'admin', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'Admin', '0910171373', '2024-12-01 14:34:19'),
+(5, 'นายวุฒิพงศ์ วิมลพัชร', 'w.wimonput@warinice.ac.th', 'admin1', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'Teacher', '0910171373', '2024-12-01 14:34:19'),
+(6, 'poppy', 'dbt@warinice.ac.th', 'admin2', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'AcademicStaff', '0910171373', '2024-12-01 14:34:19'),
+(7, 'admin', 'admin@gmail.com', 'admin3', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'Admin', '00000', '2024-12-02 14:04:36'),
+(8, 'poppy', 'poppy', 'admin01', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'AcademicStaff', '0910171373', '2024-12-01 14:34:19'),
+(9, 'poraor', 'poraor', 'poraor003', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'Executive', '0910171373', '2024-12-01 14:34:19'),
+(10, 'headoffice', 'head', 'headoffice1234', '$2y$10$avNpjqogZn0bDjywSAxLmuGj8bVcOguWIRNr/x5lGPKKVrIfijPg2', 'DepartmentHead', '0910171373', '2024-12-01 14:34:19');
 
 --
 -- Indexes for dumped tables
@@ -429,6 +481,13 @@ ALTER TABLE `constraints`
 --
 ALTER TABLE `departments`
   ADD PRIMARY KEY (`DepartmentID`);
+
+--
+-- Indexes for table `posts`
+--
+ALTER TABLE `posts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `thread_id` (`thread_id`);
 
 --
 -- Indexes for table `rooms`
@@ -469,6 +528,13 @@ ALTER TABLE `schedule`
   ADD KEY `RoomID` (`RoomID`);
 
 --
+-- Indexes for table `service_ratings`
+--
+ALTER TABLE `service_ratings`
+  ADD PRIMARY KEY (`rating_id`),
+  ADD KEY `fk_user_rating` (`user_id`);
+
+--
 -- Indexes for table `studyplans`
 --
 ALTER TABLE `studyplans`
@@ -491,11 +557,17 @@ ALTER TABLE `teachers`
   ADD KEY `UserID` (`UserID`);
 
 --
+-- Indexes for table `threads`
+--
+ALTER TABLE `threads`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`UserID`),
-  ADD UNIQUE KEY `Email` (`Email`);
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `Email` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -518,6 +590,12 @@ ALTER TABLE `constraints`
 --
 ALTER TABLE `departments`
   MODIFY `DepartmentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `posts`
+--
+ALTER TABLE `posts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `rooms`
@@ -550,6 +628,12 @@ ALTER TABLE `schedule`
   MODIFY `ScheduleID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `service_ratings`
+--
+ALTER TABLE `service_ratings`
+  MODIFY `rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+
+--
 -- AUTO_INCREMENT for table `studyplans`
 --
 ALTER TABLE `studyplans`
@@ -568,10 +652,16 @@ ALTER TABLE `teachers`
   MODIFY `TeacherID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `threads`
+--
+ALTER TABLE `threads`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
@@ -582,6 +672,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `classgroup`
   ADD CONSTRAINT `ClassGroup_ibfk_1` FOREIGN KEY (`DepartmentID`) REFERENCES `departments` (`DepartmentID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `posts`
+--
+ALTER TABLE `posts`
+  ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`thread_id`) REFERENCES `threads` (`id`);
 
 --
 -- Constraints for table `rooms`
@@ -633,7 +729,7 @@ ALTER TABLE `subjects`
 -- Constraints for table `teachers`
 --
 ALTER TABLE `teachers`
-  ADD CONSTRAINT `Teachers_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`);
+  ADD CONSTRAINT `Teachers_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`user_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
